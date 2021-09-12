@@ -9,9 +9,10 @@ int main()
 {
     std::cout << "Hello World\n";
 
-    int server_fd;
+    int server_fd, client_socket;
     int bind_result;
     struct sockaddr_in server_address; // consists of info about server address
+    struct sockaddr_in client_address; // consists of info about client address
     const int DEFAULT_PORT = 8080;
 
     /**
@@ -30,7 +31,7 @@ int main()
         return 0;
     }
     std::cout << "Socket descriptor was created: " << server_fd << std::endl;
-    
+
     /*
     struct sockaddr_in 
     { 
@@ -44,6 +45,11 @@ int main()
     server_address.sin_family = AF_INET; // use IPv4 or IPv6, whichever
     server_address.sin_port = htons(DEFAULT_PORT);
     server_address.sin_addr.s_addr = htonl(INADDR_ANY); // fill in IP
+
+    // TODO: refactor it
+    client_address.sin_family = AF_INET; // use IPv4 or IPv6, whichever
+    client_address.sin_port = htons(DEFAULT_PORT);
+    client_address.sin_addr.s_addr = htonl(INADDR_ANY); // fill in IP
 
     /**
      *  Binding an address - assigning a transport address to the socket
@@ -69,11 +75,27 @@ int main()
      * @param backlog - maximum number of pending connections that can be queued up before connections are refused
      * @return 
      */
-
     if (listen(server_fd, 3) < 0)
     {
         std::cerr << "Listen failed: " << strerror(errno) << std::endl;
         return 0;
     }
     std::cout << "Starting to listen.... " << std::endl;
+
+    /**
+     *   Accept connections will be blocked until a connection is present on the queue (socket operations are synchronous)
+     *
+     * @param socket -  is the server socket that was set for accepting connections with listen
+     * @param sockaddr is client_address
+     * @param address_len the length of client address (should be a pointer to a socklen_t)
+     * @return 
+     */
+    int address_size_client = sizeof(client_address);
+    client_socket = accept(server_fd, (struct sockaddr *)&client_address, (socklen_t *)&address_size_client);
+    if (client_socket < 0)
+    {
+        std::cerr << "Accept failed with error " << strerror(errno) << std::endl;
+        return 0;
+    }
+    std::cout << "Accepting was successful: " << std::endl;
 }

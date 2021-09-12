@@ -24,12 +24,13 @@ int main()
      */
 
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
-    std::cout << "Socket descriptor was created: " << server_fd << std::endl;
     if (server_fd < 0)
     {
         std::cerr << "Error with" << strerror(errno) << std::endl;
         return 0;
     }
+    std::cout << "Socket descriptor was created: " << server_fd << std::endl;
+    
     /*
     struct sockaddr_in 
     { 

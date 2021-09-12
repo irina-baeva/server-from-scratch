@@ -10,6 +10,7 @@ int main()
     std::cout << "Hello World\n";
 
     int server_fd;
+    int bind_result;
     struct sockaddr_in server_address; // consists of info about server address
     const int DEFAULT_PORT = 8080;
 
@@ -23,7 +24,7 @@ int main()
      */
 
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
-    std::cout << "socket descriptor was created: " << server_fd << std::endl;
+    std::cout << "Socket descriptor was created: " << server_fd << std::endl;
     if (server_fd < 0)
     {
         std::cerr << "Error with" << strerror(errno) << std::endl;
@@ -48,15 +49,30 @@ int main()
      *
      * @param socket - socket that was created with the socket system call,
      * @param sockaddr *address - is a pointer to a struct sockaddr that contains information about port and IP address
-     * @param addrlen - the length in bytes of address
+     * @param address_len - the length in bytes of address
      * @return 
      */
 
-    int bind_result = bind(server_fd, (struct sockaddr *)&server_address, sizeof(server_address));
+    bind_result = bind(server_fd, (struct sockaddr *)&server_address, sizeof(server_address));
     if (bind_result < 0)
     {
         std::cerr << "Bind failed: " << strerror(errno) << std::endl;
         return 0;
     }
-    std::cout << "Binding was successful: " <<  bind_result << std::endl;
+    std::cout << "Binding was successful: " << bind_result << std::endl;
+
+    /**
+     *  Listen
+     *
+     * @param socket - socket that was created with the socket system call,
+     * @param backlog - maximum number of pending connections that can be queued up before connections are refused
+     * @return 
+     */
+
+    if (listen(server_fd, 3) < 0)
+    {
+        std::cerr << "Listen failed: " << strerror(errno) << std::endl;
+        return 0;
+    }
+    std::cout << "Starting to listen.... " << std::endl;
 }

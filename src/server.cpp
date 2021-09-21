@@ -1,4 +1,5 @@
 #include <iostream>
+#include <hello.h>
 #include <sys/socket.h>
 #include <errno.h>
 #include <netinet/in.h>
@@ -7,7 +8,7 @@
 
 int main()
 {
-    std::cout << "Hello World\n";
+    PrintHello();
 
     int server_fd, client_socket, bind_result;
     struct sockaddr_in server_address; // consists of info about server address

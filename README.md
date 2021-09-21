@@ -16,7 +16,7 @@ cmake --build .
 ```
 then run
 ```s
-./server
+./src/server
 ```
 
 #### Resources:

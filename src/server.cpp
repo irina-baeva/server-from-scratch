@@ -9,8 +9,7 @@ int main()
 {
     std::cout << "Hello World\n";
 
-    int server_fd, client_socket;
-    int bind_result;
+    int server_fd, client_socket, bind_result;
     struct sockaddr_in server_address; // consists of info about server address
     struct sockaddr_in client_address; // consists of info about client address
     const int DEFAULT_PORT = 8080;

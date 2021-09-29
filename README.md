@@ -7,18 +7,26 @@ install cmake to build the project
 brew install cmake
 ```
 
-run cmake build from ./build 
+run cmake build from ./build folder, it will create two executable binaries: server and client
 ```s
 mkdir build
 cd build
 cmake ..
 cmake --build .
 ```
-then run
+then run from terminal
 ```s
 ./src/server
 ```
 
+from other terminal run
+```s
+./src/client
+```
+In order to see response from browser run server and open:
+```
+http://localhost:8081/
+```
 Unit tests (with Google Test) example (TODO: need more configuration)
 from project dir
 

@@ -9,11 +9,12 @@
 #include <iostream>
 #include <hello.h>
 
-#define DEFAULT_PORT 8080
+#define DEFAULT_PORT 8081
 #define SERVER_IP "127.0.0.1"
-#define EXIT_WORD_FROM_SERVER 'end'
-#define BUFER_SIZE 1024
-// bool is_client_connection_closed(const char *msg);
+#define EXIT_WORD_FROM_SERVER '#'
+#define BUFFER_SIZE 1024
+
+bool is_client_connection_closed(const char *msg);
 
 int main(int argc, char const *argv[])
 {
@@ -22,7 +23,7 @@ int main(int argc, char const *argv[])
     struct sockaddr_in server_address;
 
     const char *hello = PrintHello("client");
-    char buffer[1024] = {0};
+    char buffer[1024];
 
     client_socket = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -61,19 +62,39 @@ int main(int argc, char const *argv[])
     }
     send(client_socket, hello, strlen(hello), 0);
     std::cout << "Client sends hello message" << std::endl;
-    value_from_read = read(client_socket, buffer, BUFER_SIZE);
+    value_from_read = read(client_socket, buffer, BUFFER_SIZE);
     std::cout << "Server says: " << buffer << std::endl;
+    while (true)
+    {
+        std::cout << "Client is sending: ";
+        std::cin.getline(buffer, BUFFER_SIZE);
+        write(client_socket, buffer, BUFFER_SIZE);
+        if (is_client_connection_closed(buffer))
+        {
+            break;
+        }
+        std::cout << "Server responded: ";
+        read(client_socket, buffer, BUFFER_SIZE);
+        std::cout << buffer;
+        if (is_client_connection_closed(buffer))
+        {
+            break;
+        }
+        std::cout << std::endl;
+    }
+    close(client_socket);
+    std::cout << "Closing...." << std::endl;
 
     return 0;
 }
 
-// bool is_client_connection_closed(const char *msg)
-// {
-//     for (int i = 0; i < strlen(msg); i++)
-//     {
-//         if (msg[i] == EXIT_WORD_FROM_SERVER)
-//         {
-//             return true;
-//         }
-//     }
-// }
+bool is_client_connection_closed(const char *msg)
+{
+    for (int i = 0; i < strlen(msg); i++)
+    {
+        if (msg[i] == EXIT_WORD_FROM_SERVER)
+        {
+            return true;
+        }
+    }
+}

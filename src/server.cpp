@@ -20,7 +20,7 @@ int main()
     long value_from_read;
     struct sockaddr_in server_address;
     struct sockaddr_in client_address;
-    const int DEFAULT_PORT = 8080;
+    const int DEFAULT_PORT = 8081;
 
     /**
      * Create a TCP socket
@@ -100,10 +100,10 @@ int main()
         return 0;
     }
     std::cout << "Accepting was successful: " << std::endl;
-
+    bool isExit = false;
+    char buffer[BUFER_SIZE]; // clearing up buffer on each loop
     while (client_socket > 0)
     {
-        char buffer[BUFER_SIZE] = {0}; // clearing up buffer on each loop
 
         value_from_read = read(client_socket, buffer, BUFER_SIZE); // read() is similar to recv()
         if (value_from_read < 0)
@@ -113,17 +113,35 @@ int main()
 
         std::cout << "Client says: " << buffer << std::endl;
         write(client_socket, hello, BUFER_SIZE); // write() is similar to send()
-        std::cout << "Closing socket... " << std::endl;
         if (is_client_connection_closed(buffer))
         {
-            break;
+            isExit = true;
         }
+        while (!isExit)
+        {
+            std::cout << "Server is sending: ";
+            std::cin.getline(buffer, BUFER_SIZE);
+            write(client_socket, buffer, BUFER_SIZE);
+            if (is_client_connection_closed(buffer))
+            {
+                break;
+            }
+            std::cout << "Client responded: ";
+            read(client_socket, buffer, BUFER_SIZE);
+            std::cout << buffer << std::endl;
+            if (is_client_connection_closed(buffer))
+            {
+                break;
+            }
+        }
+        isExit = false;
         close(server_socket);
+        std::cout << "Closing socket... " << std::endl;
     }
     return 0;
 }
 
-    /**
+/**
      *  Check if client sends closing session symbol
      *
      * @param msg 

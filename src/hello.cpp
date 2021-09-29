@@ -1,8 +1,15 @@
 #include "./hello.h"
+#include "string"
 
-
-void PrintHello()
+char *PrintHello(char *socket_type)
 {
-    std::cout << "Hello World!!!"
-              << std::endl;
+    if (socket_type == "server")
+    {
+
+        return "Hello from server!!!";
+    }
+    else
+    {
+        return "Hello From client!!!";
+    }
 }

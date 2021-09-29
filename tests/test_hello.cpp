@@ -4,6 +4,6 @@
 
 TEST(TestHello, OutputTest)
 {
-    PrintHello();
+    // PrintHello();
     EXPECT_EQ(1, 1); //TODO: how to test
 }

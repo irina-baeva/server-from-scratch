@@ -1,4 +1,4 @@
 #pragma once
 #include <iostream>
 
-void PrintHello();
+char *PrintHello(char *socket_type);

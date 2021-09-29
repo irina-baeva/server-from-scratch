@@ -7,12 +7,13 @@
 #include <netdb.h>
 #include <string>
 #include <unistd.h>
+
+#define BUFER_SIZE 1024
+
 int main()
 {
-    PrintHello(); // just trying headers
-
-    int server_socket, client_socket, bind_result;
-    const char *hello = "Hello from server";
+    int server_socket, client_socket;
+    const char *hello = PrintHello("server");
     long value_from_read;
     struct sockaddr_in server_address;
     struct sockaddr_in client_address;
@@ -49,11 +50,6 @@ int main()
     server_address.sin_port = htons(DEFAULT_PORT);
     server_address.sin_addr.s_addr = htonl(INADDR_ANY); // fill in IP
 
-    // TODO: refactor it
-    client_address.sin_family = AF_INET; // use IPv4 or IPv6, whichever
-    client_address.sin_port = htons(DEFAULT_PORT);
-    client_address.sin_addr.s_addr = htonl(INADDR_ANY); // fill in IP
-
     /**
      *  Binding an address - assigning a transport address to the socket
      *
@@ -63,7 +59,7 @@ int main()
      * @return 
      */
 
-    bind_result = bind(server_socket, (struct sockaddr *)&server_address, sizeof(server_address));
+    int bind_result = bind(server_socket, (struct sockaddr *)&server_address, sizeof(server_address));
     if (bind_result < 0)
     {
         std::cerr << "Bind failed: " << strerror(errno) << std::endl;
@@ -85,9 +81,7 @@ int main()
     }
     std::cout << "Starting to listen.... " << std::endl;
 
-    while (1)
-    {
-        /**
+    /**
      *   Accept connections will be blocked until a connection is present on the queue (socket operations are synchronous)
      *
      * @param socket -  is the server socket that was set for accepting connections with listen
@@ -95,25 +89,27 @@ int main()
      * @param address_len the length of client address (should be a pointer to a socklen_t)
      * @return 
      */
-        int address_size_client = sizeof(client_address);
-        client_socket = accept(server_socket, (struct sockaddr *)&client_address, (socklen_t *)&address_size_client);
-        if (client_socket < 0)
-        {
-            std::cerr << "Accept failed with error " << strerror(errno) << std::endl;
-            return 0;
-        }
-        std::cout << "Accepting was successful: " << std::endl;
+    socklen_t address_size = sizeof(server_address);
+    client_socket = accept(server_socket, (struct sockaddr *)&server_address, &address_size);
+    if (client_socket < 0)
+    {
+        std::cerr << "Accept failed with error " << strerror(errno) << std::endl;
+        return 0;
+    }
+    std::cout << "Accepting was successful: " << std::endl;
 
-        char buffer[30000] = {0}; // TODO: understand  buffer
+    while (client_socket > 0)
+    {
+        char buffer[BUFER_SIZE] = {0}; // clearing up buffer on each loop
 
-        value_from_read = read(client_socket, buffer, 30000);
+        value_from_read = read(client_socket, buffer, BUFER_SIZE); // read() is similar to recv() 
         if (value_from_read < 0)
         {
             std::cout << "No bytes are there to read " << std::endl;
         }
 
         std::cout << "Buffer " << buffer << std::endl;
-        write(client_socket, hello, strlen(hello));
+        write(client_socket, hello, BUFER_SIZE); // write() is similar to send()
         std::cout << "Closing socket... " << std::endl;
         close(server_socket);
     }

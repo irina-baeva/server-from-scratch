@@ -9,6 +9,9 @@
 #include <unistd.h>
 
 #define BUFER_SIZE 1024
+#define EXIT_WORD 'end'
+
+bool is_client_connection_closed(const char *msg);
 
 int main()
 {
@@ -102,16 +105,38 @@ int main()
     {
         char buffer[BUFER_SIZE] = {0}; // clearing up buffer on each loop
 
-        value_from_read = read(client_socket, buffer, BUFER_SIZE); // read() is similar to recv() 
+        value_from_read = read(client_socket, buffer, BUFER_SIZE); // read() is similar to recv()
         if (value_from_read < 0)
         {
             std::cout << "No bytes are there to read " << std::endl;
         }
 
-        std::cout << "Buffer " << buffer << std::endl;
+        std::cout << "Client says: " << buffer << std::endl;
         write(client_socket, hello, BUFER_SIZE); // write() is similar to send()
         std::cout << "Closing socket... " << std::endl;
+        if (is_client_connection_closed(buffer))
+        {
+            break;
+        }
         close(server_socket);
     }
     return 0;
+}
+
+    /**
+     *  Check if client sends closing session symbol
+     *
+     * @param msg 
+     * @return boolean
+    */
+
+bool is_client_connection_closed(const char *msg)
+{
+    for (int i = 0; i < strlen(msg); i++)
+    {
+        if (msg[i] == EXIT_WORD)
+        {
+            return true;
+        }
+    }
 }

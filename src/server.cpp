@@ -20,7 +20,7 @@ int main()
     long value_from_read;
     struct sockaddr_in server_address;
     struct sockaddr_in client_address;
-    const int DEFAULT_PORT = 8081;
+    const int DEFAULT_PORT = 8088;
 
     /**
      * Create a TCP socket
@@ -32,6 +32,8 @@ int main()
      */
 
     server_socket = socket(AF_INET, SOCK_STREAM, 0);
+
+    // Check if socket is created without error
     if (server_socket < 0)
     {
         std::cerr << "Error with" << strerror(errno) << std::endl;
@@ -39,16 +41,6 @@ int main()
     }
     std::cout << "Socket descriptor was created: " << server_socket << std::endl;
 
-    /*
-    struct sockaddr_in 
-    { 
-        __uint8_t         sin_len; 
-        sa_family_t       sin_family - The address family we used when we set up the socket: AF_INET
-        in_port_t         sin_port - The port number (the transport address)
-        struct in_addr    sin_addr - machine’s IP address: INADDR_ANY
-        char              sin_zero[8]; 
-    }
-    */
     server_address.sin_family = AF_INET; // use IPv4 or IPv6, whichever
     server_address.sin_port = htons(DEFAULT_PORT);
     server_address.sin_addr.s_addr = htonl(INADDR_ANY); // fill in IP
@@ -102,45 +94,38 @@ int main()
     std::cout << "Accepting was successful: " << std::endl;
     bool isExit = false;
     char buffer[BUFER_SIZE]; // clearing up buffer on each loop
-    while (client_socket > 0)
+
+    while (!isExit)
     {
 
         value_from_read = read(client_socket, buffer, BUFER_SIZE); // read() is similar to recv()
-        if (value_from_read < 0)
+        if (value_from_read == 0)
         {
             std::cout << "No bytes are there to read " << std::endl;
+            break;
         }
-
-        std::cout << "Client says: " << buffer << std::endl;
-        write(client_socket, hello, BUFER_SIZE); // write() is similar to send()
-        if (is_client_connection_closed(buffer))
+        else if (value_from_read < 0)
         {
-            isExit = true;
+            std::cerr << "Something wrong " << std::endl;
+            break;
         }
-        while (!isExit)
+        else
         {
-            std::cout << "Server is sending: ";
-            std::cin.getline(buffer, BUFER_SIZE);
-            write(client_socket, buffer, BUFER_SIZE);
-            if (is_client_connection_closed(buffer))
+            std::cout << "Client says: " << std::string(buffer, 0, value_from_read) << std::endl;
+            // Send the same message
+            if (send(client_socket, buffer, BUFER_SIZE, 0) < 0)
             {
-                break;
-            }
-            std::cout << "Client responded: ";
-            read(client_socket, buffer, BUFER_SIZE);
-            std::cout << buffer << std::endl;
-            if (is_client_connection_closed(buffer))
-            {
+                std::cerr << "Something wrong ";
                 break;
             }
         }
-        isExit = false;
-        close(server_socket);
-        std::cout << "Closing socket... " << std::endl;
     }
+    close(server_socket);
+    std::cout << "Closing socket... " << std::endl;
     return 0;
 }
 
+// TODO: fix it and use it
 /**
      *  Check if client sends closing session symbol
      *

@@ -9,7 +9,7 @@
 #include <iostream>
 #include <hello.h>
 
-#define DEFAULT_PORT 8081
+#define DEFAULT_PORT 8088
 #define SERVER_IP "127.0.0.1"
 #define EXIT_WORD_FROM_SERVER '#'
 #define BUFFER_SIZE 1024

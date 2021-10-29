@@ -1,31 +1,30 @@
-### Server implementation written in c++ from scratch
+## Server implementation written in C++ from scratch
 
-### local environment 
+### Local installation 
 
-install cmake to build the project
+Install cmake to build the project. For macOS you can run following command:
 ```s
 brew install cmake
 ```
 
-run cmake build from ./build folder, it will create two executable binaries: server and client
+Run cmake build from ./build folder, it will create two executable binaries: server and client
 ```s
 mkdir build
 cd build
 cmake ..
 cmake --build .
 ```
-then run from terminal
+then run from terminal:
 ```s
 ./src/server/server
 ```
 
-from other terminal run
+from other terminal run:
 ```s
 ./src/client/client
 ```
 
-Unit tests (with Google Test) example (TODO: need more configuration)
-from project dir
+Unit tests WIP (with Google Test) example (TODO: need more configuration)
 
 ```
 git clone https://github.com/google/googletest/

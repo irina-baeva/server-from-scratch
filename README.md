@@ -34,6 +34,7 @@ git clone https://github.com/google/googletest/
 
 ### Resources:
 1. <a href="https://medium.com/from-the-scratch/http-server-what-do-you-need-to-know-to-build-a-simple-http-server-from-scratch-d1ef8945e4fa">HTTP Server: Everything you need to know to Build a simple HTTP server from scratch</a>
+2. Beej's Guide to Network Programming. Using Internet Sockets https://beej.us/guide/bgnet/
 
 
 ### Steps:
@@ -45,3 +46,7 @@ git clone https://github.com/google/googletest/
 3. Extracting client socket into the own class -> clientSocker.h, clientSocket.cpp, main.cpp and placed to folder client.
 
 4. Adapted CMakeLists.txt files for current implementation.
+
+so the echo implementation of server as follows
+
+![diagram](assets/echo.jpg)

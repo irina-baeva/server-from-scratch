@@ -1,3 +1,5 @@
+// This file was refactored to class in serverSocker.cpp, serverSocket.h main.cpp
+
 #include <string>
 #include <iostream>
 #include <hello.h>
@@ -31,7 +33,7 @@ int main()
      * @return socket descriptor, or -1 on error.
      */
 
-    server_socket = socket(AF_INET, SOCK_STREAM, 0);
+    server_socket = socket(AF_INET, SOCK_STREAM, 0); // listening socket
 
     // Check if socket is created without error
     if (server_socket < 0)
@@ -43,7 +45,7 @@ int main()
 
     server_address.sin_family = AF_INET; // use IPv4 or IPv6, whichever
     server_address.sin_port = htons(DEFAULT_PORT);
-    server_address.sin_addr.s_addr = htonl(INADDR_ANY); // fill in IP
+    server_address.sin_addr.s_addr = htonl(INADDR_ANY); // IP
 
     /**
      *  Binding an address - assigning a transport address to the socket

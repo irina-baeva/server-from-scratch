@@ -5,4 +5,4 @@ include(CTest) # Include testing cmake package.
 add_executable(test_hello test_hello.cpp)
 
 # Link the executable to needed libraries.
-target_link_libraries(test_hello hello gtest gtest_main)
+target_link_libraries(test_hello gtest gtest_main)

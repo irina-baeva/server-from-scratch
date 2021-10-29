@@ -1,6 +1,5 @@
-add_library(hello hello.cpp)
-add_executable(server server.cpp)
-target_link_libraries(server hello)
+include_directories(${PROJECT_SOURCE_DIR}/src/client)
+include_directories(${PROJECT_SOURCE_DIR}/src/server)
 
-add_executable(client client.cpp)
-target_link_libraries(client hello)
+add_subdirectory(${PROJECT_SOURCE_DIR}/src/server)
+add_subdirectory(${PROJECT_SOURCE_DIR}/src/client)

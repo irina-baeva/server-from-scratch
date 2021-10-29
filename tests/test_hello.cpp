@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 #include <string>
-#include "hello.h"
 
 TEST(TestHello, OutputTest)
 {

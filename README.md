@@ -16,17 +16,14 @@ cmake --build .
 ```
 then run from terminal
 ```s
-./src/server
+./src/server/server
 ```
 
 from other terminal run
 ```s
-./src/client
+./src/client/client
 ```
-In order to see response from browser run server and open:
-```
-http://localhost:8081/
-```
+
 Unit tests (with Google Test) example (TODO: need more configuration)
 from project dir
 
@@ -40,13 +37,11 @@ git clone https://github.com/google/googletest/
 
 
 ### Steps:
-1. Created simple echo server. All the code in separate files client.cpp and server.cpp. It is possible to run them with commands described above.
+1. Created simple echo server. All the code in separate folder achived. It is possible to run them with c++ commands. In order to see response from browser run server and open: http://localhost:8081/
 
-2. Extracting server socket into the own class -> serverSocker.h, serverSocket.cpp, main.cpp
 
-To run class implementation of server for now possible only within ./src folder 
-```
-c++ main.cpp serverSocket.cpp -o main.out
-./main.out
-```
-And run client from step 1.
+2. Extracted server socket into the own class -> serverSocker.h, serverSocket.cpp, main.cpp and placed to folder server.
+
+3. Extracting client socket into the own class -> clientSocker.h, clientSocket.cpp, main.cpp and placed to folder client.
+
+4. Adapted CMakeLists.txt files for current implementation.

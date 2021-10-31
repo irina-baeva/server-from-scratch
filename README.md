@@ -24,6 +24,12 @@ from other terminal run:
 ./src/client/client
 ```
 
+In order to test connections, telnet can be installed. For macOS you can run following command:
+```s
+brew install telnet
+```
+
+
 Unit tests WIP (with Google Test) example (TODO: need more configuration)
 
 ```
@@ -49,3 +55,11 @@ git clone https://github.com/google/googletest/
 so the echo implementation of server as follows
 
 ![diagram](assets/echo.jpg)
+
+5. Implemented multiple clients on echo server with select()
+
+![diagram](assets/multi.png)
+
+To test, I am creating a few clients with telnet 
+
+![diagram](assets/example_multi.png)

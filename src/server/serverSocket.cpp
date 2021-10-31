@@ -9,6 +9,10 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #define BUFER_SIZE 1024
+#define MAX_NUM_CLIENTS 10
+
+int new_client_socket, client_socket[MAX_NUM_CLIENTS], selectValue, i, client_socket_descriptor, max_socket_descriptor;
+int value_from_read = 0;
 
 struct sockaddr_in server_address;
 struct sockaddr_in client_address;
@@ -28,32 +32,80 @@ void serverListener::SendMessage(int clientSocket, std::string msg)
 // the main loop
 void serverListener::Run()
 {
+
+    //set of socket descriptors
+    fd_set readfds;
+
+    char *wellcomeMessage = "Hey new client \n";
+
+    //initialise all client_socket[] to 0 so not checked
+    for (i = 0; i < MAX_NUM_CLIENTS; i++)
+    {
+        client_socket[i] = 0;
+    }
+    int server_socket = CreateSocket();
+
     while (true)
     {
-        // create server_socket socket
-        int server_socket = CreateSocket();
-        if (server_socket < 0)
+        FD_ZERO(&readfds); // clear
+        FD_SET(server_socket, &readfds);
+        max_socket_descriptor = server_socket;
+
+        //add client sockets to fd set
+        for (i = 0; i < MAX_NUM_CLIENTS; i++)
         {
-            break;
+            client_socket_descriptor = client_socket[i];
+            if (client_socket_descriptor > 0)
+            {
+                FD_SET(client_socket_descriptor, &readfds);
+            }
+            if (client_socket_descriptor > max_socket_descriptor)
+            {
+                max_socket_descriptor = client_socket_descriptor;
+            }
         }
-        // if all good -> try to get client socket
-        int client_socket = WaitForConnection(server_socket);
-        if (client_socket < 0)
+
+        selectValue = select(max_socket_descriptor + 1, &readfds, NULL, NULL, NULL);
+        if ((selectValue < 0) && (errno != EINTR))
         {
-            break;
+            std::cerr << "Select error: " << strerror(errno) << std::endl;
         }
-        else
+
+        // accept new connection
+        if (FD_ISSET(server_socket, &readfds))
         {
-            close(server_socket);
-            int value_from_read = 0;
-            do
+            new_client_socket = WaitForConnection(server_socket);
+            if (send(new_client_socket, wellcomeMessage, strlen(wellcomeMessage), 0) != strlen(wellcomeMessage))
+            {
+                std::cerr << "Sending wellcome message error: " << strerror(errno) << std::endl;
+            }
+            std::cout << "Sending wellcome message  was successful" << std::endl;
+
+            //add a new connection to list of sockets
+            for (i = 0; i < MAX_NUM_CLIENTS; i++)
+            {
+                //check if there is free space
+                if (client_socket[i] == 0)
+                {
+                    client_socket[i] = new_client_socket;
+                    std::cout << "Adding new client to the set of sockets with index " << i << std::endl;
+                    break;
+                }
+            }
+        }
+        // else recieve a new message
+        for (i = 0; i < MAX_NUM_CLIENTS; i++)
+        {
+            client_socket_descriptor = client_socket[i];
+            if (FD_ISSET(client_socket_descriptor, &readfds))
             {
                 memset(buffer, 0, BUFER_SIZE);
-                value_from_read = read(client_socket, buffer, BUFER_SIZE);
+                value_from_read = read(client_socket_descriptor, buffer, BUFER_SIZE);
+
                 if (value_from_read == 0)
                 {
-                    std::cout << "No bytes are there to read " << std::endl;
-                    break;
+                    close(client_socket_descriptor);
+                    client_socket[i] = 0; // so it could be reused
                 }
                 else if (value_from_read < 0)
                 {
@@ -62,15 +114,13 @@ void serverListener::Run()
                 }
                 else
                 {
-                    std::cout << "Client says: " << std::string(buffer, 0, value_from_read) << std::endl;
-                    // Send the same message though message recived function as send(client_socket, buffer, BUFER_SIZE, 0)
+                    std::cout << "Client with index " << i << " says: " << std::string(buffer, 0, value_from_read) << std::endl;
                     if (MessageRecieved != NULL)
                     {
-                        MessageRecieved(this, client_socket, std::string(buffer, 0, value_from_read));
+                        MessageRecieved(this, client_socket_descriptor, std::string(buffer, 0, value_from_read));
                     }
                 }
-            } while (value_from_read > 0);
-            close(client_socket);
+            }
         }
     }
 };
@@ -120,6 +170,6 @@ int serverListener::WaitForConnection(int server_socket)
         std::cerr << "Accept failed with error " << strerror(errno) << std::endl;
         return 0;
     }
-    std::cout << "Accepting was successful: " << std::endl;
+    std::cout << "Accepting new connection was successful" << std::endl;
     return client_socket;
 };

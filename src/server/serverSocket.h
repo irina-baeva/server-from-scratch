@@ -1,11 +1,16 @@
+// this is a header so you need a header guard or pragma once
+// https://en.wikipedia.org/wiki/Include_guard
+#ifndef server_serverSocket_h_
+#define server_serverSocket_h_
+
 #include <string>
-#include <iostream>
-#include <sys/socket.h>
-#include <errno.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <string>
-#include <unistd.h>
+// #include <iostream>
+// #include <sys/socket.h>
+// #include <errno.h>
+// #include <netinet/in.h>
+// #include <netdb.h>
+// #include <string>
+// #include <unistd.h>
 
 // declaration of the serverListener socket class
 class serverListener;
@@ -34,3 +39,5 @@ private:
     int m_port;
     MessageRecievedHandler MessageRecieved;
 };
+
+#endif // server_serverSocket_h_

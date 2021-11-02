@@ -8,21 +8,33 @@
 #include <string>
 #include <unistd.h>
 #include <arpa/inet.h>
-#define BUFFER_SIZE 1024
 
+// prefer constexpr over preprocessor constants:
+//#define BUFFER_SIZE 1024
+constexpr std::size_t BUFFER_SIZE = 1024;
+
+
+// Why do you create global variables ... make them local
 struct sockaddr_in server_address;
 struct sockaddr_in client_address;
 char buffer[BUFFER_SIZE];
 
 clientSocket::clientSocket(std::string ipAddress, int port)
     : m_ipAddress(ipAddress),
-      m_port(port){};
+      m_port(port)
+{
+    // client_socket should be part of the objects state
+    // m_client_socket = CreateClientSocket();    
+};
 
 void clientSocket::Run()
 {
+    // this code belongs into main.cpp
     while (true)
     {
+        // client_socket should be part of the objects state
         int client_socket = CreateClientSocket();
+        
         int value_from_read = 0;
         while (true)
         {

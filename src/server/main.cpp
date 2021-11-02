@@ -1,10 +1,16 @@
+// as a general rule put your own headers before external/standard lib ones
+// it prevents makeing code brittle
+#include "serverSocket.h"
+
 #include <string>
 #include <iostream>
-#include "serverSocket.h"
-#pragma once
-using namespace std;
 
-void Listener_MessageRecieved(serverListener *listener, int client, string msg);
+
+// See client code for comments
+//#pragma once
+//using namespace std;
+
+void Listener_MessageRecieved(serverListener *listener, int client, std::string msg);
 
 int main()
 {
@@ -12,7 +18,7 @@ int main()
     server.Run();
 };
 
-void Listener_MessageRecieved(serverListener *listener, int client, string msg)
+void Listener_MessageRecieved(serverListener *listener, int client, std::string msg)
 {
     listener->SendMessage(client, msg);
 };

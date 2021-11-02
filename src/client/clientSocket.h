@@ -1,18 +1,28 @@
+// this is a header so you need a header guard or pragma once
+// https://en.wikipedia.org/wiki/Include_guard
+#ifndef client_clientSocket_h_
+#define client_clientSocket_h_
+
 #include <string>
-#include <iostream>
-#include <sys/socket.h>
-#include <errno.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <string>
-#include <unistd.h>
+// You do not need these headers. 
+// You do not use the features they provide in the header
+// #include <iostream>
+// #include <sys/socket.h>
+// #include <errno.h>
+// #include <netinet/in.h>
+// #include <netdb.h>
+// #include <string>
+// #include <unistd.h>
 
 // declaration of the serverListener socket class
-// class serverListener;
+//class serverListener;
 
 // callback to data recieved ?
 
 // typedef void (*MessageRecievedHandler)(serverListener *listener, int socketId, std::string msgRecieved);
+// I prefer the modern `using` syntax:
+//using MessageRecievedHandler = void (*)(serverListener *listener, int socketId, std::string msgRecieved);
+
 
 class clientSocket
 {
@@ -33,3 +43,5 @@ private:
     std::string m_ipAddress;
     int m_port;
 };
+
+#endif // client_clientSocket_h_

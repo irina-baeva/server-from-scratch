@@ -99,6 +99,10 @@ void serverListener::Run()
             client_socket_descriptor = client_socket[i];
             if (FD_ISSET(client_socket_descriptor, &readfds))
             {
+                // This part is application specific ... 
+                // it should be part of the calling code (i.e. in main.cpp) 
+                
+
                 memset(buffer, 0, BUFER_SIZE);
                 value_from_read = read(client_socket_descriptor, buffer, BUFER_SIZE);
 
